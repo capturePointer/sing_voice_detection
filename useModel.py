@@ -2,12 +2,12 @@ import os
 import time
 import joblib
 import numpy
+import math
 import numpy as np
 from baseZhang import calcMFCC, load_model, load_model_weights
 from keras.utils import np_utils
 from scipy.io.wavfile import read
 
-from preprocessData import filter_each_frame
 
 SEED = 1007
 np.random.seed(SEED)
@@ -16,6 +16,22 @@ EPOCH = 10000
 TIME_SIZE = 10
 ENCODER = joblib.load('encoder.joblib')
 
+def filter_each_frame(feature, audio_owner, TIME_SIZE):
+    temp_feature = []
+    dataset_X = []
+    dataset_Y = []
+    for feature_frame in feature:
+        drop_flag = False
+        for number in feature_frame:
+            if math.isinf(number) or math.isnan(number):
+                drop_flag = True
+                break
+        if not drop_flag:
+            temp_feature.append(feature_frame)
+    for item in range(0, len(temp_feature) - TIME_SIZE, TIME_SIZE):
+        dataset_X.append(temp_feature[item:item + TIME_SIZE])
+        dataset_Y.append(audio_owner)
+    return dataset_X, dataset_Y
 
 def load_lstm_model(onDataset='dataset.h5', featureX='X'):
     onDataset_name = onDataset.split('/')[-1].split('.')[0]
