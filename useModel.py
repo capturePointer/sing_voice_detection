@@ -13,7 +13,7 @@ SEED = 1007
 np.random.seed(SEED)
 LOAD_MODEL_FLAG = True
 EPOCH = 10000
-TIME_SIZE = 10
+TIME_SIZE = 7
 ENCODER = joblib.load('encoder.joblib')
 
 def filter_each_frame(feature, audio_owner, TIME_SIZE):
